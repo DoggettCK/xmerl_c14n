@@ -1,9 +1,16 @@
 # XmerlC14n
 
-[![CircleCI][circle-img]][circle] [![Hex Version][hex-img]][hex] [![Hex Downloads][downloads-img]][downloads] [![License][license-img]][license]
+[![Hex Version][hex-img]][hex] [![Hex Downloads][downloads-img]][downloads] [![License][license-img]][license]
+
+[hex-img]: https://img.shields.io/hexpm/v/xmerl_c14n.svg
+[hex]: https://hex.pm/packages/xmerl_c14n
+[downloads-img]: https://img.shields.io/hexpm/dt/xmerl_c14n.svg
+[downloads]: https://hex.pm/packages/xmerl_c14n
+[license-img]: https://img.shields.io/badge/license-BSD-blue.svg
+[license]: https://opensource.org/licenses/BSD-2-Clause
 
 `XmerlC14n` canonicalizes XML according to the [Exclusive XML Canonicalization
-specification version 1.0](http://www.w3. rg/2001/10/xml-exc-c14n#), for use in
+specification version 1.0](http://www.w3.org/2001/10/xml-exc-c14n#), for use in
 XML signatures.
 
 It is a port to Elixir from the `xmerl_c14n` Erlang module found in the [esaml
