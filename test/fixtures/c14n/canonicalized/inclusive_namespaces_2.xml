@@ -1,0 +1,1 @@
+<foo:a xmlns:bar="urn:bar:" xmlns:foo="urn:foo:"><foo:b bar:nothing="something">foo</foo:b></foo:a>
