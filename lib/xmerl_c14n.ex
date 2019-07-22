@@ -1,10 +1,13 @@
 defmodule XmerlC14n do
   @moduledoc """
-  Elixirification of esaml's (https://github.com/arekinath/esaml) Erlang xmerl_c14 implementation.
+  Elixirification of [esaml's](https://github.com/arekinath/esaml) Erlang
+  `xmerl_c14n` implementation.
 
-  Functions for performing XML canonicalization (C14n), as specified at http://www.w3.org/TR/xml-c14n .
+  Functions for performing XML canonicalization (c14n), as specified at
+  [http://www.w3.org/TR/xml-c14n](http://www.w3.org/TR/xml-c14n)
 
-  These routines work on xmerl data structures (see the xmerl user guide for details).
+  These routines work on `xmerl` data structures (see the [xmerl user
+  guide](http://erlang.org/doc/apps/xmerl/users_guide.html) for details).
   """
 
   ### TYPE DECLARATIONS
@@ -35,12 +38,51 @@ defmodule XmerlC14n do
   ### PUBLIC API
 
   @doc """
-  Worker function for canonicalization (c14n). It builds the canonical string
-  data for a given XML "thing" (element/attribute/whatever).
+  Given an `xmerl` XML tuple (element/attribute/etc...), returns the canonical binary version of the XML it represents.
+
+  Returns either `{:ok, String.t()}` if canonicalized successfully, or
+  `{:error, {:failed_canonicalization, term}}` if canonicalization failed.
 
   If the `preserve_comments` argument is true, preserves comments in the output. Any
   namespace prefixes listed in `inclusive_namespaces` will be left as they are and not
   modified during canonicalization.
+
+  ## Examples
+    iex> xml = ~S{<!DOCTYPE doc [<!ATTLIST e9 attr CDATA "default">]>
+    ...><doc>
+    ...>   <e1   />
+    ...>   <e2   ></e2>
+    ...>   <e3   name = "elem3"   id="elem3"   />
+    ...>   <e4   name="elem4"   id="elem4"   ></e4>
+    ...>   <e5 a:attr="out" b:attr="sorted" attr2="all" attr="I'm"
+    ...>      xmlns:b="http://www.ietf.org"
+    ...>      xmlns:a="http://www.w3.org"
+    ...>      xmlns="http://example.org"/>
+    ...>   <e6 xmlns="" xmlns:a="http://www.w3.org">
+    ...>      <e7 xmlns="http://www.ietf.org">
+    ...>         <e8 xmlns="" xmlns:a="http://www.w3.org">
+    ...>            <e9 xmlns="" xmlns:a="http://www.ietf.org"/>
+    ...>         </e8>
+    ...>      </e7>
+    ...>   </e6>
+    ...></doc>
+    ...>}
+    iex> {doc, _} = xml |> to_charlist |> :xmerl_scan.string(namespace_conformant: true, document: true)
+    iex> XmerlC14n.canonicalize(doc)
+    {:ok, ~S{<doc>
+       <e1></e1>
+       <e2></e2>
+       <e3 id="elem3" name="elem3"></e3>
+       <e4 id="elem4" name="elem4"></e4>
+       <e5 xmlns="http://example.org" xmlns:a="http://www.w3.org" xmlns:b="http://www.ietf.org" attr="I'm" attr2="all" b:attr="sorted" a:attr="out"></e5>
+       <e6>
+          <e7 xmlns="http://www.ietf.org">
+             <e8 xmlns="">
+                <e9></e9>
+             </e8>
+          </e7>
+       </e6>
+    </doc>}}
   """
   @spec canonicalize(entity :: xml_type) ::
           {:ok, String.t()} | {:error, {:failed_canonicalization, term}}
@@ -65,7 +107,51 @@ defmodule XmerlC14n do
   end
 
   @doc """
-  TODO
+  Given an `xmerl` XML tuple (element/attribute/etc...), returns the canonical binary version of the XML it represents.
+
+  Returns either `String.t()` if canonicalized successfully, or raises an
+  `ArgumentError` if canonicalization failed.
+
+  If the `preserve_comments` argument is true, preserves comments in the output. Any
+  namespace prefixes listed in `inclusive_namespaces` will be left as they are and not
+  modified during canonicalization.
+
+  ## Examples
+    iex> xml = ~S{<!DOCTYPE doc [<!ATTLIST e9 attr CDATA "default">]>
+    ...><doc>
+    ...>   <e1   />
+    ...>   <e2   ></e2>
+    ...>   <e3   name = "elem3"   id="elem3"   />
+    ...>   <e4   name="elem4"   id="elem4"   ></e4>
+    ...>   <e5 a:attr="out" b:attr="sorted" attr2="all" attr="I'm"
+    ...>      xmlns:b="http://www.ietf.org"
+    ...>      xmlns:a="http://www.w3.org"
+    ...>      xmlns="http://example.org"/>
+    ...>   <e6 xmlns="" xmlns:a="http://www.w3.org">
+    ...>      <e7 xmlns="http://www.ietf.org">
+    ...>         <e8 xmlns="" xmlns:a="http://www.w3.org">
+    ...>            <e9 xmlns="" xmlns:a="http://www.ietf.org"/>
+    ...>         </e8>
+    ...>      </e7>
+    ...>   </e6>
+    ...></doc>
+    ...>}
+    iex> {doc, _} = xml |> to_charlist |> :xmerl_scan.string(namespace_conformant: true, document: true)
+    iex> XmerlC14n.canonicalize!(doc)
+    ~S{<doc>
+       <e1></e1>
+       <e2></e2>
+       <e3 id="elem3" name="elem3"></e3>
+       <e4 id="elem4" name="elem4"></e4>
+       <e5 xmlns="http://example.org" xmlns:a="http://www.w3.org" xmlns:b="http://www.ietf.org" attr="I'm" attr2="all" b:attr="sorted" a:attr="out"></e5>
+       <e6>
+          <e7 xmlns="http://www.ietf.org">
+             <e8 xmlns="">
+                <e9></e9>
+             </e8>
+          </e7>
+       </e6>
+    </doc>}
   """
   @spec canonicalize!(entity :: xml_type) :: String.t()
   def canonicalize!(entity), do: canonicalize!(entity, true)
