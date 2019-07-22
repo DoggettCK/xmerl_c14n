@@ -1,6 +1,5 @@
 defmodule XmerlC14nTest do
   use ExUnit.Case
-  doctest XmerlC14n
 
   import XmerlC14n.Fixtures
 
