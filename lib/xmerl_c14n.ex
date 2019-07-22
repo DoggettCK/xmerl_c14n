@@ -48,25 +48,7 @@ defmodule XmerlC14n do
   modified during canonicalization.
 
   ## Examples
-    iex> xml = ~S{<!DOCTYPE doc [<!ATTLIST e9 attr CDATA "default">]>
-    ...><doc>
-    ...>   <e1   />
-    ...>   <e2   ></e2>
-    ...>   <e3   name = "elem3"   id="elem3"   />
-    ...>   <e4   name="elem4"   id="elem4"   ></e4>
-    ...>   <e5 a:attr="out" b:attr="sorted" attr2="all" attr="I'm"
-    ...>      xmlns:b="http://www.ietf.org"
-    ...>      xmlns:a="http://www.w3.org"
-    ...>      xmlns="http://example.org"/>
-    ...>   <e6 xmlns="" xmlns:a="http://www.w3.org">
-    ...>      <e7 xmlns="http://www.ietf.org">
-    ...>         <e8 xmlns="" xmlns:a="http://www.w3.org">
-    ...>            <e9 xmlns="" xmlns:a="http://www.ietf.org"/>
-    ...>         </e8>
-    ...>      </e7>
-    ...>   </e6>
-    ...></doc>
-    ...>}
+    iex> xml = "<!DOCTYPE doc [<!ATTLIST e9 attr CDATA \\"default\\">]>\\n<doc>\\n   <e1   />\\n   <e2   ></e2>\\n   <e3   name = \\"elem3\\"   id=\\"elem3\\"   />\\n   <e4   name=\\"elem4\\"   id=\\"elem4\\"   ></e4>\\n   <e5 a:attr=\\"out\\" b:attr=\\"sorted\\" attr2=\\"all\\" attr=\\"I'm\\"\\n      xmlns:b=\\"http://www.ietf.org\\"\\n      xmlns:a=\\"http://www.w3.org\\"\\n      xmlns=\\"http://example.org\\"/>\\n   <e6 xmlns=\\"\\" xmlns:a=\\"http://www.w3.org\\">\\n      <e7 xmlns=\\"http://www.ietf.org\\">\\n         <e8 xmlns=\\"\\" xmlns:a=\\"http://www.w3.org\\">\\n            <e9 xmlns=\\"\\" xmlns:a=\\"http://www.ietf.org\\"/>\\n         </e8>\\n      </e7>\\n   </e6>\\n</doc>"
     iex> {doc, _} = xml |> to_charlist |> :xmerl_scan.string(namespace_conformant: true, document: true)
     iex> XmerlC14n.canonicalize(doc)
     {:ok, ~S{<doc>
@@ -117,25 +99,7 @@ defmodule XmerlC14n do
   modified during canonicalization.
 
   ## Examples
-    iex> xml = ~S{<!DOCTYPE doc [<!ATTLIST e9 attr CDATA "default">]>
-    ...><doc>
-    ...>   <e1   />
-    ...>   <e2   ></e2>
-    ...>   <e3   name = "elem3"   id="elem3"   />
-    ...>   <e4   name="elem4"   id="elem4"   ></e4>
-    ...>   <e5 a:attr="out" b:attr="sorted" attr2="all" attr="I'm"
-    ...>      xmlns:b="http://www.ietf.org"
-    ...>      xmlns:a="http://www.w3.org"
-    ...>      xmlns="http://example.org"/>
-    ...>   <e6 xmlns="" xmlns:a="http://www.w3.org">
-    ...>      <e7 xmlns="http://www.ietf.org">
-    ...>         <e8 xmlns="" xmlns:a="http://www.w3.org">
-    ...>            <e9 xmlns="" xmlns:a="http://www.ietf.org"/>
-    ...>         </e8>
-    ...>      </e7>
-    ...>   </e6>
-    ...></doc>
-    ...>}
+    iex> xml = "<!DOCTYPE doc [<!ATTLIST e9 attr CDATA \\"default\\">]>\\n<doc>\\n   <e1   />\\n   <e2   ></e2>\\n   <e3   name = \\"elem3\\"   id=\\"elem3\\"   />\\n   <e4   name=\\"elem4\\"   id=\\"elem4\\"   ></e4>\\n   <e5 a:attr=\\"out\\" b:attr=\\"sorted\\" attr2=\\"all\\" attr=\\"I'm\\"\\n      xmlns:b=\\"http://www.ietf.org\\"\\n      xmlns:a=\\"http://www.w3.org\\"\\n      xmlns=\\"http://example.org\\"/>\\n   <e6 xmlns=\\"\\" xmlns:a=\\"http://www.w3.org\\">\\n      <e7 xmlns=\\"http://www.ietf.org\\">\\n         <e8 xmlns=\\"\\" xmlns:a=\\"http://www.w3.org\\">\\n            <e9 xmlns=\\"\\" xmlns:a=\\"http://www.ietf.org\\"/>\\n         </e8>\\n      </e7>\\n   </e6>\\n</doc>"
     iex> {doc, _} = xml |> to_charlist |> :xmerl_scan.string(namespace_conformant: true, document: true)
     iex> XmerlC14n.canonicalize!(doc)
     ~S{<doc>
