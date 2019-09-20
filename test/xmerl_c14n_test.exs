@@ -4,7 +4,7 @@ defmodule XmerlC14nTest do
   import XmerlC14n.Fixtures
 
   describe "canonicalize!/3" do
-    test "namespaces of returned elements are unmodified if no inclusive namespaces requested" do
+    test "namespaces of returned elements are unmodified if no inclusive namespaces requested (xmerl tuples version)" do
       original_xml = parse_xml("original/inclusive_namespaces")
 
       canonicalized_xml = read_fixture("canonicalized/inclusive_namespaces_1")
@@ -13,8 +13,26 @@ defmodule XmerlC14nTest do
       assert {:ok, ^canonicalized_xml} = XmerlC14n.canonicalize(original_xml, false, [])
     end
 
-    test "namespaces of returned elements are modified if inclusive namespaces requested" do
+    test "namespaces of returned elements are unmodified if no inclusive namespaces requested (string version)" do
+      original_xml = read_fixture("original/inclusive_namespaces")
+
+      canonicalized_xml = read_fixture("canonicalized/inclusive_namespaces_1")
+
+      assert canonicalized_xml == XmerlC14n.canonicalize!(original_xml, false, [])
+      assert {:ok, ^canonicalized_xml} = XmerlC14n.canonicalize(original_xml, false, [])
+    end
+
+    test "namespaces of returned elements are modified if inclusive namespaces requested (xmerl tuples version)" do
       original_xml = parse_xml("original/inclusive_namespaces")
+
+      canonicalized_xml = read_fixture("canonicalized/inclusive_namespaces_2")
+
+      assert canonicalized_xml == XmerlC14n.canonicalize!(original_xml, false, ['bar'])
+      assert {:ok, ^canonicalized_xml} = XmerlC14n.canonicalize(original_xml, false, ['bar'])
+    end
+
+    test "namespaces of returned elements are modified if inclusive namespaces requested (string version)" do
+      original_xml = read_fixture("original/inclusive_namespaces")
 
       canonicalized_xml = read_fixture("canonicalized/inclusive_namespaces_2")
 
@@ -28,7 +46,7 @@ defmodule XmerlC14nTest do
     # Test names are crap, but they're based off the existing Erlang tests,
     # which are somehow worse
 
-    test "3.1 PIs, Comments, and Outside of Document Element" do
+    test "3.1 PIs, Comments, and Outside of Document Element (xmerl tuples version)" do
       original_xml = parse_xml("original/example_3_1")
 
       without_comments = read_fixture("canonicalized/example_3_1_without_comments")
@@ -42,7 +60,21 @@ defmodule XmerlC14nTest do
       assert {:ok, ^with_comments} = XmerlC14n.canonicalize(original_xml, true)
     end
 
-    test "3.2 Whitespace in Document Content" do
+    test "3.1 PIs, Comments, and Outside of Document Element (string version)" do
+      original_xml = read_fixture("original/example_3_1")
+
+      without_comments = read_fixture("canonicalized/example_3_1_without_comments")
+
+      assert without_comments == XmerlC14n.canonicalize!(original_xml, false)
+      assert {:ok, ^without_comments} = XmerlC14n.canonicalize(original_xml, false)
+
+      with_comments = read_fixture("canonicalized/example_3_1_with_comments")
+
+      assert with_comments == XmerlC14n.canonicalize!(original_xml, true)
+      assert {:ok, ^with_comments} = XmerlC14n.canonicalize(original_xml, true)
+    end
+
+    test "3.2 Whitespace in Document Content (xmerl tuples version)" do
       original_xml = parse_xml("original/example_3_2")
 
       canonicalized_xml = read_fixture("canonicalized/example_3_2")
@@ -51,7 +83,16 @@ defmodule XmerlC14nTest do
       assert {:ok, ^canonicalized_xml} = XmerlC14n.canonicalize(original_xml, true)
     end
 
-    test "3.3 Start and End Tags" do
+    test "3.2 Whitespace in Document Content (string version)" do
+      original_xml = read_fixture("original/example_3_2")
+
+      canonicalized_xml = read_fixture("canonicalized/example_3_2")
+
+      assert canonicalized_xml == XmerlC14n.canonicalize!(original_xml, true)
+      assert {:ok, ^canonicalized_xml} = XmerlC14n.canonicalize(original_xml, true)
+    end
+
+    test "3.3 Start and End Tags (xmerl tuples version)" do
       original_xml = parse_xml("original/example_3_3")
 
       canonicalized_xml = read_fixture("canonicalized/example_3_3")
@@ -60,8 +101,26 @@ defmodule XmerlC14nTest do
       assert {:ok, ^canonicalized_xml} = XmerlC14n.canonicalize(original_xml, true)
     end
 
-    test "3.4 Character Modifications and Character References" do
+    test "3.3 Start and End Tags (string version)" do
+      original_xml = read_fixture("original/example_3_3")
+
+      canonicalized_xml = read_fixture("canonicalized/example_3_3")
+
+      assert canonicalized_xml == XmerlC14n.canonicalize!(original_xml, true)
+      assert {:ok, ^canonicalized_xml} = XmerlC14n.canonicalize(original_xml, true)
+    end
+
+    test "3.4 Character Modifications and Character References (xmerl tuples version)" do
       original_xml = parse_xml("original/example_3_4")
+
+      canonicalized_xml = read_fixture("canonicalized/example_3_4")
+
+      assert canonicalized_xml == XmerlC14n.canonicalize!(original_xml, true)
+      assert {:ok, ^canonicalized_xml} = XmerlC14n.canonicalize(original_xml, true)
+    end
+
+    test "3.4 Character Modifications and Character References (string version)" do
+      original_xml = read_fixture("original/example_3_4")
 
       canonicalized_xml = read_fixture("canonicalized/example_3_4")
 
@@ -90,7 +149,7 @@ defmodule XmerlC14nTest do
     # These may be due to being written against a 2001 version of the spec,
     # where these cases didn't exist yet.
 
-    test "XML is canonicalized without any namespace transformations" do
+    test "XML is canonicalized without any namespace transformations (xmerl tuples version)" do
       original_xml = parse_xml("original/default_namespace_1")
 
       canonicalized_xml = read_fixture("canonicalized/default_namespace_1")
@@ -99,8 +158,26 @@ defmodule XmerlC14nTest do
       assert {:ok, ^canonicalized_xml} = XmerlC14n.canonicalize(original_xml, true)
     end
 
-    test "More complex example of canonicalization without namespace transformations" do
+    test "XML is canonicalized without any namespace transformations (string version)" do
+      original_xml = read_fixture("original/default_namespace_1")
+
+      canonicalized_xml = read_fixture("canonicalized/default_namespace_1")
+
+      assert canonicalized_xml == XmerlC14n.canonicalize!(original_xml, true)
+      assert {:ok, ^canonicalized_xml} = XmerlC14n.canonicalize(original_xml, true)
+    end
+
+    test "More complex example of canonicalization without namespace transformations (xmerl tuples version)" do
       original_xml = parse_xml("original/default_namespace_2")
+
+      canonicalized_xml = read_fixture("canonicalized/default_namespace_2")
+
+      assert canonicalized_xml == XmerlC14n.canonicalize!(original_xml, true)
+      assert {:ok, ^canonicalized_xml} = XmerlC14n.canonicalize(original_xml, true)
+    end
+
+    test "More complex example of canonicalization without namespace transformations (string version)" do
+      original_xml = read_fixture("original/default_namespace_2")
 
       canonicalized_xml = read_fixture("canonicalized/default_namespace_2")
 

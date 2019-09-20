@@ -38,7 +38,9 @@ defmodule XmerlC14n do
   ### PUBLIC API
 
   @doc """
-  Given an `xmerl` XML tuple (element/attribute/etc...), returns the canonical binary version of the XML it represents.
+  Given an `xmerl` XML tuple (element/attribute/etc...) or string
+  representation of XML, returns the canonical binary version of the XML it
+  represents.
 
   Returns either `{:ok, String.t()}` if canonicalized successfully, or
   `{:error, {:failed_canonicalization, term}}` if canonicalization failed.
@@ -68,8 +70,7 @@ defmodule XmerlC14n do
     </e6>
     </doc>
 
-  iex> {doc, _} = xml |> to_charlist |> :xmerl_scan.string(namespace_conformant: true, document: true)
-  iex> {:ok, canonicalized_xml} = XmerlC14n.canonicalize(doc)
+  iex> {:ok, canonicalized_xml} = XmerlC14n.canonicalize(xml)
   iex> IO.puts(canonicalized_xml)
   <doc>
       <e1></e1>
@@ -87,21 +88,24 @@ defmodule XmerlC14n do
   </doc>
   ```
   """
-  @spec canonicalize(entity :: xml_type) ::
+  @spec canonicalize(entity :: xml_type | String.t()) ::
           {:ok, String.t()} | {:error, {:failed_canonicalization, term}}
   def canonicalize(entity), do: canonicalize(entity, true)
 
-  @spec canonicalize(entity :: xml_type, preserve_comments :: boolean()) ::
+  @spec canonicalize(entity :: xml_type | String.t(), preserve_comments :: boolean()) ::
           {:ok, String.t()} | {:error, {:failed_canonicalization, term}}
   def canonicalize(entity, preserve_comments), do: canonicalize(entity, preserve_comments, [])
 
   @spec canonicalize(
-          entity :: xml_type,
+          entity :: xml_type | String.t(),
           preserve_comments :: boolean(),
           inclusive_namespaces :: []
         ) :: {:ok, String.t()} | {:error, {:failed_canonicalization, term}}
   def canonicalize(entity, preserve_comments, inclusive_namespaces) do
-    canonicalized_xml = do_canonicalize(entity, [], [], preserve_comments, inclusive_namespaces)
+    canonicalized_xml =
+      entity
+      |> maybe_parse_xml_document()
+      |> do_canonicalize([], [], preserve_comments, inclusive_namespaces)
 
     {:ok, canonicalized_xml}
   rescue
@@ -110,7 +114,9 @@ defmodule XmerlC14n do
   end
 
   @doc """
-  Given an `xmerl` XML tuple (element/attribute/etc...), returns the canonical binary version of the XML it represents.
+  Given an `xmerl` XML tuple (element/attribute/etc...) or string
+  representation of XML, returns the canonical binary version of the XML it
+  represents.
 
   Returns either `String.t()` if canonicalized successfully, or raises an
   `ArgumentError` if canonicalization failed.
@@ -140,8 +146,7 @@ defmodule XmerlC14n do
     </e6>
     </doc>
 
-  iex> {doc, _} = xml |> to_charlist |> :xmerl_scan.string(namespace_conformant: true, document: true)
-  iex> XmerlC14n.canonicalize!(doc) |> IO.puts
+  iex> XmerlC14n.canonicalize!(xml) |> IO.puts
   <doc>
     <e1></e1>
     <e2></e2>
@@ -158,22 +163,37 @@ defmodule XmerlC14n do
   </doc>
   ```
   """
-  @spec canonicalize!(entity :: xml_type) :: String.t()
+  @spec canonicalize!(entity :: xml_type | String.t()) :: String.t()
   def canonicalize!(entity), do: canonicalize!(entity, true)
 
-  @spec canonicalize!(entity :: xml_type, preserve_comments :: boolean()) :: String.t()
+  @spec canonicalize!(entity :: xml_type | String.t(), preserve_comments :: boolean()) ::
+          String.t()
   def canonicalize!(entity, preserve_comments), do: canonicalize!(entity, preserve_comments, [])
 
   @spec canonicalize!(
-          entity :: xml_type,
+          entity :: xml_type | String.t(),
           preserve_comments :: boolean(),
           inclusive_namespaces :: []
         ) :: String.t()
   def canonicalize!(entity, preserve_comments, inclusive_namespaces) do
-    do_canonicalize(entity, [], [], preserve_comments, inclusive_namespaces)
+    entity
+    |> maybe_parse_xml_document()
+    |> do_canonicalize([], [], preserve_comments, inclusive_namespaces)
   end
 
   ### PRIVATE API
+  # Support canonicalizing a string of XML
+  defp maybe_parse_xml_document(string) when is_binary(string) do
+    {document, _} =
+      string
+      |> to_charlist()
+      |> :xmerl_scan.string(namespace_conformant: true, document: true)
+
+    document
+  end
+
+  defp maybe_parse_xml_document(non_string), do: non_string
+
   # Make XML OK to eat, in a non-quoted situation
   defp xml_safe_string(term) do
     xml_safe_string(term, false)
