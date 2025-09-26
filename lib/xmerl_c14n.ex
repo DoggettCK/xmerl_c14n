@@ -7,7 +7,7 @@ defmodule XmerlC14n do
   [http://www.w3.org/TR/xml-c14n](http://www.w3.org/TR/xml-c14n)
 
   These routines work on `xmerl` data structures (see the [xmerl user
-  guide](http://erlang.org/doc/apps/xmerl/users_guide.html) for details).
+  guide](https://www.erlang.org/doc/apps/xmerl/xmerl_ug.html) for details).
   """
 
   ### TYPE DECLARATIONS
